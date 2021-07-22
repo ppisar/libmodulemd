@@ -20,7 +20,10 @@
 #include <yaml.h>
 
 static void
-test (const char *input, gint64 expected_value, gboolean expected_error)
+test (const char *input,
+      gboolean strict,
+      gint64 expected_value,
+      gboolean expected_error)
 {
   gint64 parsed;
   g_autoptr (GError) error = NULL;
@@ -31,7 +34,7 @@ test (const char *input, gint64 expected_value, gboolean expected_error)
     &parser, (const unsigned char *)input, strlen (input));
   parser_skip_document_start (&parser);
 
-  parsed = modulemd_yaml_parse_int64 (&parser, &error);
+  parsed = modulemd_yaml_parse_int64 (&parser, strict, &error);
   if (expected_error)
     g_assert_nonnull (error);
   else
@@ -42,37 +45,49 @@ test (const char *input, gint64 expected_value, gboolean expected_error)
 static void
 test_int64_valid (void)
 {
-  test ("42", 42, FALSE);
+  test ("42", TRUE, 42, FALSE);
 }
 
 static void
 test_int64_invalid_no_digit (void)
 {
-  test ("foo", 0, TRUE);
+  test ("foo", TRUE, 0, TRUE);
 }
 
 static void
 test_int64_invalid_incomplete (void)
 {
-  test ("42foo", 0, TRUE);
+  test ("42foo", TRUE, 0, TRUE);
 }
 
 static void
 test_int64_valid_negative (void)
 {
-  test ("-42", -42, FALSE);
+  test ("-42", TRUE, -42, FALSE);
 }
 
 static void
 test_int64_invalid_too_big (void)
 {
-  test ("9223372036854775808", 0, TRUE);
+  test ("9223372036854775808", TRUE, 0, TRUE);
+}
+
+static void
+test_int64_strict_overflowed (void)
+{
+  test ("18446744073709551615", TRUE, 0, TRUE);
+}
+
+static void
+test_int64_lax_overflowed (void)
+{
+  test ("18446744073709551615", FALSE, -1, FALSE);
 }
 
 static void
 test_int64_invalid_too_small (void)
 {
-  test ("-9223372036854775809", 0, TRUE);
+  test ("-9223372036854775809", TRUE, 0, TRUE);
 }
 
 static void
@@ -143,6 +158,10 @@ main (int argc, char *argv[])
                    test_int64_invalid_too_big);
   g_test_add_func ("/modulemd/v2/int64/yaml/parse/invalid_too_small",
                    test_int64_invalid_too_small);
+  g_test_add_func ("/modulemd/v2/int64/yaml/parse/strict_overflowed",
+                   test_int64_strict_overflowed);
+  g_test_add_func ("/modulemd/v2/int64/yaml/parse/lax_overflowed",
+                   test_int64_lax_overflowed);
 
   g_test_add_func ("/modulemd/v2/uint64/yaml/parse/valid", test_uint64_valid);
   g_test_add_func ("/modulemd/v2/uint64/yaml/parse/invalid_no_digit",

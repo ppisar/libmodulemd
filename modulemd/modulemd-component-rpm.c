@@ -858,7 +858,8 @@ modulemd_component_rpm_parse_yaml (yaml_parser_t *parser,
           else if (g_str_equal ((const gchar *)event.data.scalar.value,
                                 "buildorder"))
             {
-              buildorder = modulemd_yaml_parse_int64 (parser, &nested_error);
+              buildorder =
+                modulemd_yaml_parse_int64 (parser, strict, &nested_error);
               if (buildorder == 0 && nested_error != NULL)
                 {
                   MMD_YAML_ERROR_EVENT_EXIT (

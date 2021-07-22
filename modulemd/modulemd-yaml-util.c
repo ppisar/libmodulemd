@@ -424,7 +424,9 @@ modulemd_yaml_parse_bool (yaml_parser_t *parser, GError **error)
 
 
 gint64
-modulemd_yaml_parse_int64 (yaml_parser_t *parser, GError **error)
+modulemd_yaml_parse_int64 (yaml_parser_t *parser,
+                           gboolean strict,
+                           GError **error)
 {
   gint64 value;
   gchar *endptr;
@@ -441,13 +443,24 @@ modulemd_yaml_parse_int64 (yaml_parser_t *parser, GError **error)
 
   if ((value == G_MAXINT64 && errno == ERANGE))
     {
-      g_set_error (error,
-                   MODULEMD_YAML_ERROR,
-                   MODULEMD_ERROR_VALIDATE,
-                   "%s: The integer value is larger than %" G_GINT64_FORMAT,
-                   (const gchar *)event.data.scalar.value,
-                   G_MAXINT64);
-      return 0;
+      if (!strict && g_str_equal ((const gchar *)event.data.scalar.value,
+                                  "18446744073709551615"))
+        {
+          g_debug ("Coercing an invalid signed 64-bit integer to -1: %s",
+                   (const gchar *)event.data.scalar.value);
+          return -1;
+        }
+      else
+        {
+          g_set_error (
+            error,
+            MODULEMD_YAML_ERROR,
+            MODULEMD_ERROR_VALIDATE,
+            "%s: The integer value is larger than %" G_GINT64_FORMAT,
+            (const gchar *)event.data.scalar.value,
+            G_MAXINT64);
+          return 0;
+        }
     }
 
   if ((value == G_MININT64 && errno == ERANGE))

@@ -692,8 +692,15 @@ modulemd_yaml_parse_bool (yaml_parser_t *parser, GError **error);
  * modulemd_yaml_parse_int64:
  * @parser: (inout): A libyaml parser object positioned at the beginning of a
  * int64 scalar entry.
+ * @strict: Do not accept overflowed "18446744073709551615" string.
  * @error: (out): A #GError that will return the reason for a parsing or
  * validation error.
+ *
+ * If @strict is false, conform to a specification and report an error on
+ * values not representable in 64-bit signed inteteger. If @strict is true, an
+ * invalid "18446744073709551615" string is recognized as the -1 value.
+ * There exist non-conformant modulemd-v2 documents with this buildorder in
+ * the wild.
  *
  * Returns: (transfer full): A 64-bit signed integer representing the parsed
  * value. Returns 0 if a parse error occurred and sets @error appropriately.
@@ -701,7 +708,9 @@ modulemd_yaml_parse_bool (yaml_parser_t *parser, GError **error);
  * Since: 2.0
  */
 gint64
-modulemd_yaml_parse_int64 (yaml_parser_t *parser, GError **error);
+modulemd_yaml_parse_int64 (yaml_parser_t *parser,
+                           gboolean strict,
+                           GError **error);
 
 
 /**
