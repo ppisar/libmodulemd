@@ -33,6 +33,8 @@
  * @name: (in): A string with the name of the component.
  * @strict: (in): Whether the parser should return failure if it encounters an
  * unknown mapping key or if it should ignore it.
+ * @accept_overflowed_buildorder (in): Recognize overflowed
+ * "18446744073709551615" buildorder as -1.
  * @error: (out): A #GError that will return the reason for parsing error.
  *
  * Returns: (transfer full): A newly-allocated #ModulemdComponentModule object
@@ -45,6 +47,7 @@ ModulemdComponentModule *
 modulemd_component_module_parse_yaml (yaml_parser_t *parser,
                                       const gchar *name,
                                       gboolean strict,
+                                      gboolean accept_overflowed_buildorder,
                                       GError **error);
 
 

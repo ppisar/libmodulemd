@@ -419,7 +419,7 @@ component_rpm_test_parse_yaml (void)
   g_assert_cmpint (event.type, ==, YAML_SCALAR_EVENT);
   yaml_event_delete (&event);
 
-  r = modulemd_component_rpm_parse_yaml (&parser, "bar", TRUE, &error);
+  r = modulemd_component_rpm_parse_yaml (&parser, "bar", TRUE, FALSE, &error);
   g_assert_nonnull (r);
   g_assert_true (MODULEMD_IS_COMPONENT_RPM (r));
   g_assert_cmpstr (
@@ -479,7 +479,7 @@ component_rpm_test_parse_packager_yaml (void)
   g_assert_cmpint (event.type, ==, YAML_SCALAR_EVENT);
   yaml_event_delete (&event);
 
-  r = modulemd_component_rpm_parse_yaml (&parser, "bar", TRUE, &error);
+  r = modulemd_component_rpm_parse_yaml (&parser, "bar", TRUE, FALSE, &error);
   g_assert_no_error (error);
   g_assert_nonnull (r);
   g_assert_true (MODULEMD_IS_COMPONENT_RPM (r));

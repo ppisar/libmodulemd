@@ -649,6 +649,7 @@ ModulemdComponentRpm *
 modulemd_component_rpm_parse_yaml (yaml_parser_t *parser,
                                    const gchar *name,
                                    gboolean strict,
+                                   gboolean accept_overflowed_buildorder,
                                    GError **error)
 {
   MODULEMD_INIT_TRACE ();
@@ -859,7 +860,9 @@ modulemd_component_rpm_parse_yaml (yaml_parser_t *parser,
                                 "buildorder"))
             {
               buildorder =
-                modulemd_yaml_parse_int64 (parser, strict, &nested_error);
+                modulemd_yaml_parse_int64 (parser,
+                                           !accept_overflowed_buildorder,
+                                           &nested_error);
               if (buildorder == 0 && nested_error != NULL)
                 {
                   MMD_YAML_ERROR_EVENT_EXIT (

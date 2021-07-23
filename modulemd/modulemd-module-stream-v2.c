@@ -2736,6 +2736,7 @@ modulemd_module_stream_v2_parse_rpm_components (
             parser,
             (const gchar *)event.data.scalar.value,
             strict,
+            TRUE,
             &nested_error);
           if (!component)
             {
@@ -2801,6 +2802,7 @@ modulemd_module_stream_v2_parse_module_components (
             parser,
             (const gchar *)event.data.scalar.value,
             strict,
+            TRUE,
             &nested_error);
           if (!component)
             {
