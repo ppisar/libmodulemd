@@ -2420,7 +2420,11 @@ modulemd_module_stream_v1_parse_rpm_components (
             parser,
             (const gchar *)event.data.scalar.value,
             strict,
+#ifdef HAVE_OVERFLOWED_BUILDORDER
             TRUE,
+#else
+            FALSE,
+#endif
             &nested_error);
           if (!component)
             {
@@ -2486,7 +2490,11 @@ modulemd_module_stream_v1_parse_module_components (
             parser,
             (const gchar *)event.data.scalar.value,
             strict,
+#ifdef HAVE_OVERFLOWED_BUILDORDER
             TRUE,
+#else
+            FALSE,
+#endif
             &nested_error);
           if (!component)
             {
