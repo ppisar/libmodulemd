@@ -767,10 +767,18 @@ modulemd_module_add_translation (ModulemdModule *self,
   gsize i;
   ModulemdModuleStream *stream = NULL;
   ModulemdTranslation *newtrans = NULL;
+  const gchar * self_module_name = NULL;
+  const gchar * translation_module_name = NULL;
 
-  g_return_if_fail (
-    g_str_equal (modulemd_translation_get_module_name (translation),
-                 modulemd_module_get_module_name (self)));
+  g_return_if_fail ( self != NULL );
+  self_module_name = modulemd_module_get_module_name(self);
+  g_return_if_fail ( self_module_name != NULL );
+
+  g_return_if_fail ( translation != NULL );
+  translation_module_name = modulemd_translation_get_module_name (translation);
+  g_return_if_fail ( translation_module_name != NULL );
+
+  g_return_if_fail ( g_str_equal (translation_module_name, self_module_name) );
 
   newtrans = modulemd_translation_copy (translation);
 
