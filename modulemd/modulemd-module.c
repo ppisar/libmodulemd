@@ -824,10 +824,18 @@ modulemd_module_add_obsoletes (ModulemdModule *self,
   ModulemdModuleStream *stream = NULL;
   ModulemdObsoletes *new_obsoletes = NULL;
   ModulemdObsoletes *current_obsoletes = NULL;
+  const gchar * self_module_name = NULL;
+  const gchar * obsoletes_module_name = NULL;
 
-  g_return_if_fail (
-    g_str_equal (modulemd_obsoletes_get_module_name (obsoletes),
-                 modulemd_module_get_module_name (self)));
+  g_return_if_fail ( self != NULL );
+  self_module_name = modulemd_module_get_module_name(self);
+  g_return_if_fail ( self_module_name != NULL );
+
+  g_return_if_fail ( obsoletes != NULL );
+  obsoletes_module_name = modulemd_obsoletes_get_module_name (obsoletes);
+  g_return_if_fail ( obsoletes_module_name != NULL );
+
+  g_return_if_fail ( g_str_equal (obsoletes_module_name, self_module_name) );
 
   new_obsoletes = modulemd_obsoletes_copy (obsoletes);
 
